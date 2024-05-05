@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lo Shu Grid Numerology</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9; /* Default background color */
+        background-image: url("https://img.freepik.com/premium-photo/horoscope-astrology-zodiac-horoscope-zodiac-fortune-sign-myth-stars-symbol-traditional_488220-5335.jpg?size=626&ext=jpg&uid=R120324389&ga=GA1.1.747203015.1714893791&semt=sph"); /* Background image URL */
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        animation: animateBackground 30s linear infinite; /* Animation */
+      }
+
+      @keyframes animateBackground {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        max-width: 500px;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .dob-input {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .dob-select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        flex: 1;
+        margin: 0 10px;
+      }
+      .submit-btn,
+      .reset-btn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .submit-btn:hover,
+      .reset-btn:hover {
+        background-color: #0056b3;
+      }
+      .lo-shu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 10px;
+        text-align: center;
+        margin-top: 20px;
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.8
+        ); /* Semi-transparent white background */
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .cell {
+        width: 100px;
+        height: 100px;
+        border-radius: 5px;
+        line-height: 100px;
+        font-size: 18px;
+        font-weight: bold;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333; /* Dark color */
+      }
+      .cell.highlighted {
+        background-color: #007bff;
+      }
+      .meanings {
+        margin-top: 30px;
+      }
+      .meaning {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .meaning span {
+        font-weight: bold;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Lo Shu Grid Numerology</h1>
+      <form id="dobForm">
+        <div class="dob-input">
+          <select id="dobDay" class="dob-select" required>
+            <option value="">Day</option>
+            <!-- Dynamically populated with JavaScript -->
+          </select>
+          <select id="dobMonth" class="dob-select" required>
+            <option value="">Month</option>
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select id="dobYear" class="dob-select" required>
+            <option value="">Year</option>
+            <!-- Dynamically populated with JavaScript -->
+          </select>
+        </div>
+        <button type="submit" class="submit-btn">Generate Lo Shu Grid</button>
+        <button type="reset" class="reset-btn">Reset</button>
+      </form>
+      <div class="lo-shu-grid" id="lo-shu-grid">
+        <!-- Lo Shu Grid cells will be populated here -->
+      </div>
+      <div class="meanings" id="meanings">
+        <!-- Numerology meanings will be displayed here -->
+      </div>
+    </div>
+
+    <script>
+      // Function to populate day and year dropdowns
+      function populateDropdown(selectId, start, end) {
+        const select = document.getElementById(selectId);
+        for (let i = start; i <= end; i++) {
+          const option = document.createElement("option");
+          option.value = i < 10 ? "0" + i : "" + i;
+          option.textContent = i < 10 ? "0" + i : "" + i;
+          select.appendChild(option);
+        }
+      }
+
+      // Populate day and year dropdowns dynamically
+      populateDropdown("dobDay", 1, 31);
+      populateDropdown("dobYear", 1900, new Date().getFullYear());
+
+      function isLoShuGrid(grid) {
+        // Check if the grid is a Lo Shu Grid
+        const magicNumber = 15;
+        // Check rows, columns, and diagonals
+        for (let i = 0; i < 3; i++) {
+          if (grid[i].reduce((a, b) => a + b, 0) !== magicNumber) {
+            return false;
+          }
+          if (grid.reduce((a, b) => a + b[i], 0) !== magicNumber) {
+            return false;
+          }
+        }
+        if (grid[0][0] + grid[1][1] + grid[2][2] !== magicNumber) {
+          return false;
+        }
+        if (grid[0][2] + grid[1][1] + grid[2][0] !== magicNumber) {
+          return false;
+        }
+        return true;
+      }
+
+      document
+        .getElementById("dobForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          generateLoShuGrid();
+        });
+
+      document
+        .getElementById("dobForm")
+        .addEventListener("reset", function (event) {
+          document.getElementById("lo-shu-grid").innerHTML = "";
+          document.getElementById("meanings").innerHTML = "";
+        });
+
+      function generateLoShuGrid() {
+        const day = document.getElementById("dobDay").value;
+        const month = document.getElementById("dobMonth").value;
+        const year = document.getElementById("dobYear").value;
+
+        if (!day || !month || !year) {
+          alert("Please select all date components.");
+          return;
+        }
+
+        const grid = [];
+        const dobStr = day + month + year.slice(-2);
+
+        const presentNumbers = [];
+
+        for (let i = 0; i < 3; i++) {
+          grid.push([]);
+          for (let j = 0; j < 3; j++) {
+            const index = i * 3 + j;
+            const number = Number(dobStr[index]);
+            grid[i].push(number);
+            if (!isNaN(number) && number !== 0) {
+              presentNumbers.push(number);
+            }
+          }
+        }
+
+        const loShuGridDiv = document.getElementById("lo-shu-grid");
+        loShuGridDiv.innerHTML = ""; // Clear previous grid
+
+        const isLoShu = isLoShuGrid(grid);
+
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            const number = grid[i][j];
+            cell.innerText = !isNaN(number) ? number : "0"; // Display number or 0 if NaN
+
+            // Add random background color to each cell
+            cell.style.backgroundColor = `#${Math.floor(
+              Math.random() * 16777215
+            ).toString(16)}`;
+
+            if (!isLoShu || !isNumberPresentInLoShu(number, grid)) {
+              cell.classList.add("missing");
+            }
+
+            loShuGridDiv.appendChild(cell);
+          }
+        }
+
+        // Display meanings of numbers according to numerology and their associated planet
+        const meaningsDiv = document.getElementById("meanings");
+        meaningsDiv.innerHTML = "<h2>Meanings of Numbers in Numerology</h2>";
+        for (const number of presentNumbers) {
+          const meaning = getNumerologyMeaning(number);
+          meaningsDiv.innerHTML += `<div class="meaning"><span>${number}:</span> ${meaning}</div>`;
+        }
+      }
+
+      // Function to check if a number is present in Lo Shu Grid
+      function isNumberPresentInLoShu(number, grid) {
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            if (grid[i][j] === number) {
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+
+      // Function to get the meaning of a number according to numerology
+      function getNumerologyMeaning(number) {
+        // Add your own meanings for each number
+        switch (number) {
+          case 1:
+            return "Independence, Leadership";
+          case 2:
+            return "Cooperation, Diplomacy";
+          case 3:
+            return "Creativity, Expression";
+          case 4:
+            return "Stability, Security";
+          case 5:
+            return "Adventure, Change";
+          case 6:
+            return "Harmony, Balance";
+          case 7:
+            return "Spirituality, Wisdom";
+          case 8:
+            return "Ambition, Material Success";
+          case 9:
+            return "Compassion, Humanitarianism";
+          default:
+            return "Unknown";
+        }
+      }
+
+      // Generate Lo Shu grid on page load
+      window.onload = generateLoShuGrid;
+
+      // Print welcome message
+      console.log("Welcome to Numero anytime!");
+    </script>
+  </body>
+</html>
